@@ -69,3 +69,35 @@ Ng = get_gear_ratio(speed_reducer)
 def F_net(omega, terrain_angle, rover, planet, Crr):
     #to be cont.
     
+#Code to create function tau_dcmotor, this will take in stall torque, no load torque, no load
+## speed, and omega. The function will then return a numpy array of the same size as omega for 
+### overall motor torque called tau_dcmotor 
+def tau_dcmotor(omega, motor): 
+    # gets values from motor dict and converts to variables with the same name
+    torque_stall = motor.get('torque_stall')
+    speed_noload = motor.get('speed_noload')
+    torque_noload = motor.get('torque_noload')
+    # checks is omega is either a vector or scalar, if not raise exception
+    if np.isscalar(omega) == True:
+        # motor speed cannot exceed speed with no load, return no torque if this is true
+        if omega > speed_noload:
+            tau = 0
+        # motor speed cannot be less than 0, return only stall torque if true
+        if omega < 0:
+            tau = torque_stall 
+        # if 0 < omega < speed_noload, run the full equation to find torque
+        else :
+            tau = torque_stall - ((torque_stall - torque_noload) / speed_noload) * omega
+    if isinstance(omega, np.array) == True:
+        # motor speed cannot exceed speed with no load, return no torque if this is true
+        if omega > speed_noload:
+            tau = 0
+        # motor speed cannot be less than 0, return only stall torque if true
+        if omega < 0:
+            tau = torque_stall 
+        # if 0 < omega < speed_noload, run the full equation to find torque
+        else :
+            tau = torque_stall - ((torque_stall - torque_noload) / speed_noload) * omega
+    else:
+        raise Exception("Sorry, omega must be a vector or scalar")
+    return tau
