@@ -72,19 +72,25 @@ def F_gravity(terrain_angle, rover, planet):
     if isinstance(planet, dict) == False:
         raise Exception("Data structure specifying planet parameters in not in correct form")
     if isinstance(terrain_angle,float) == False:
-        if(any(terrain_angle/75) < -1 or any(terrain_angle/75)<1 ):
+        if(any(terrain_angle/75) < -1 or any(terrain_angle/75) > 1 ):
              raise Exception("The some numpy angles may be too large")
     if isinstance(terrain_angle,(float,int)) == True:
-        if((terrain_angle)/75 < -1 or (terrain_angle)/75 <1):
+        if((terrain_angle)/75 < -1 or (terrain_angle)/75 > 1):
              raise Exception("The some float angles may be too large")
     mass = get_mass(rover)
     gravity = float(planet['g'])
-    for i in terrain_angle:
-        x=(math.sin(math.radians(i)))
+    if isinstance(terrain_angle,float) == True:
+        x=(math.sin(math.radians(terrain_angle)))
         y=mass * gravity* x*-1
-        final.append(y)
-    Nam=np.array(final)
-    return Nam
+        Nam = y
+        return Nam
+    else:
+        for i in terrain_angle:
+            x=(math.sin(math.radians(i)))
+            y=mass * gravity* x*-1
+            final.append(y)
+        Nam=np.array(final)
+        return Nam
 def tau_dcmotor(omega, motor):
     import numpy as np
     if isinstance(omega, (int, float, str)) and isinstance(omega, np.ndarray):
