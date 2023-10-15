@@ -173,3 +173,23 @@ def motorW(v, rover):
             final.append(b)
         w = np.array(final)
     return w
+    
+def mechpower(v, rover):
+    import numpy as np
+    # Check if v is a valid input
+    if not (isinstance(v, (int, float)) or (isinstance(v, np.ndarray) and np.issubdtype(v.dtype, np.number))):
+        raise Exception("Input 'v' must be a scalar or a 1D numpy array")
+    
+    # Check if rover is a dict
+    if not isinstance(rover, dict):
+        raise Exception("Input 'rover' must be a dictionary")   
+        
+    # Compute torque (tau) using tau_dcmotor function
+    tau = tau_dcmotor(v, rover['wheel_assembly']['motor'])
+    
+    # Computes angular velocity (omega) using motorW function
+    w = motorW(tau, rover)
+    
+    # Computes mechanical power (P) as the product of torque and angular velocity
+    P = tau * w 
+    return P
